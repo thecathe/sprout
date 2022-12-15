@@ -1,0 +1,10 @@
+{
+	"vbox_utils": {
+		"shorthand": ["vbox"],
+		"enabled": false,
+		"commands": [
+			"modprobe -a vboxguest vboxsf vboxvideo",
+			"VBoxClient-all"
+		]
+	}
+}
