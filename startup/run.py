@@ -8,24 +8,25 @@ args = []
 features = {}
 default_feature_path = "featured.json"
 
-valid_feature_fields = ["enabled","commands"]
+valid_feature_fields = ["enabled", "commands"]
 
 flags = {
-    "-p": True, # status print
-    "-db": False, # debug printing
-    "-vb": False, # verbose printing
-    "-sp": False, # special, overrides all other printing
+    "-p": True,  # status print
+    "-db": False,  # debug printing
+    "-vb": False,  # verbose printing
+    "-sp": False,  # special, overrides all other printing
 }
 valid_flags = flags.keys()
 
-valid_args = ["help","demo", "demoargs"]
+valid_args = ["help", "demo", "demoargs"]
+
 
 class log_mgr():
-    
+
     do_print = True
     do_verbose = False
     do_special = False
-    
+
     def __init__(self, _print, _verbose, _special):
         self.do_print = _print
         self.do_verbose = _print and _verbose
@@ -34,23 +35,25 @@ class log_mgr():
     def log(self, msg):
         if self.do_print:
             print(msg)
-            
+
     def vb(self, msg):
         if self.do_verbose:
             print(msg)
-            
+
     def sp(self, msg):
         if self.do_special:
             print(msg)
-            
+
     def spp(self, msg):
         if self.do_print:
             print(msg)
         elif self.do_special:
             print(msg)
 
+
 def new_log() -> log_mgr:
     return log_mgr(flags["-p"], flags["-vb"], flags["-sp"])
+
 
 def exec_featured():
     l.log("\nstarting up...")
@@ -68,19 +71,21 @@ def exec_featured():
         else:
             l.vb(f"({i}/{featlen}) skipped {f_key}")
 
+
 def print_args(_args):
     arglen = len(_args)
     if arglen == 0:
         l.vb(f"{arglen} arguments given")
-    else :
+    else:
         for i, arg in enumerate(_args):
             l.spp(f"({i+1}/{arglen}) : {arg}")
 
+
 def parse_flags(_args) -> list:
-    
+
     _flags = []
     _flagless = []
-    
+
     l.log("\nparsing flags...")
     # unload flags
     for arg in _args:
@@ -92,18 +97,19 @@ def parse_flags(_args) -> list:
                 l.log(f"unknown flag \"{arg}\"")
             else:
                 _flagless.append(arg)
-                        
+
     # update flags: toggle defaults
     for arg in _flags:
         flags[arg] = not flags[arg]
-    
+
     # if -sp then override other flags
     if flags["-sp"]:
         flags["-p"] = False
         flags["-vb"] = False
         flags["-db"] = False
-    
+
     return _flagless
+
 
 def parse_args(_args):
     l.log("\nparsing args...")
@@ -113,7 +119,8 @@ def parse_args(_args):
             clean_exit()
         else:
             if _args[0] == "help":
-                l.log("help ::\nvalid arguments:\n\t{0}".format('\n\t'.join(valid_args)))
+                l.log("help ::\nvalid arguments:\n\t{0}".format(
+                    '\n\t'.join(valid_args)))
                 l.log("valid flags:\n\t{0}".format('\n\t'.join(valid_flags)))
                 clean_exit()
 
@@ -131,7 +138,7 @@ def parse_args(_args):
                 # print out remainding args
                 print_args(_args[1:])
                 clean_exit()
-            
+
             else:
                 # actual args, handle sensibly
                 for arg in _args:
@@ -144,15 +151,18 @@ def parse_args(_args):
                     if unknown_arg:
                         l.log(f"unhandled arg: {arg}")
 
+
 def get_file_contents(file_path) -> str:
     f = open(file_path, "r")
     ret = f.read()
     f.close()
     return ret
 
+
 def clean_exit():
     l.log("\nexiting\n")
     exit(0)
+
 
 def startup() -> list:
     global l
@@ -162,11 +172,13 @@ def startup() -> list:
     l = new_log()
     return _args
 
+
 def load_features(_file) -> dict:
     l.log(f"\nloading {_file}...")
     # locate featured.json
     _features = json.loads(get_file_contents(_file))
     return validate_features(_features)
+
 
 def validate_features(_features) -> dict:
     _valid = {}
@@ -184,6 +196,7 @@ def validate_features(_features) -> dict:
             l.log(f"feature \"{f_key}\" is not valid: {_features[f_key]}")
     return _valid
 
+
 def update_valid_args(_valid_args):
     for ft in features.keys():
         _valid_args.append(ft)
@@ -193,26 +206,27 @@ def update_valid_args(_valid_args):
     l.vb(f"updated valid args: {_valid_args}")
     return _valid_args
 
+
 # set up log with defaults
 l = new_log()
 
 if __name__ == "__main__":
-    
+
     # handle flags
     args = startup()
-    
+
     # load features from file
     features = load_features(default_feature_path)
     # add loaded features to valid args
     valid_args = update_valid_args(valid_args)
-    
+
     # handle remaining args
     parse_args(args)
-    
+
     # run any macros
     exec_featured()
 
     l.log("\nfinished!\n")
-    
+
 else:
     l.log(f"else main?: {__name__}\n")
