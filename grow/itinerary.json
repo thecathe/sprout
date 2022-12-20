@@ -1,0 +1,36 @@
+{
+  "itinerary":[
+    {
+      "name": "fix tlmgr",
+      "keywords": ["tex","texlive","tlmgr"],
+      "requires-pkgs":["texlive-core"],
+      "tasks": {"ordered":true,"list":[{
+      "kind":"file amend","task":{"file": {
+        "type":"config","context":"tex",
+        "base": {"is-env-var":true,"path":"TEXMFDIST"},
+        "relative-path": "scripts/texlive/tlmgr.pl"
+      },
+      "changes":[
+        {
+          "original":"$Master = \"$Master/../..\";",
+          "update":"$Master = \"${Master}/../../..\";"
+        }
+      ],"additions":[]}
+    },{
+    "kind": "file amend",
+    "task":{
+    "file":{
+      "type":"init","context":"shell","base":{"is-env-var":false,"path":""},"relative-path":""
+    },"changes":[],"additions":[{
+      "position":{
+        "any": true,
+        "line": -1
+      }, "content":"alias tlmgr='TEXMFDIST/scripts/texlive/tlmgr.pl --usermode'"
+    }]}
+    },{
+    "kind":"command",
+    "task":{"commands":["tlmgr init-usertree","tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet"]}
+    }]
+    }}
+  ]
+}
