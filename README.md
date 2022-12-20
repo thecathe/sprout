@@ -5,7 +5,7 @@ repo for containing stuff as i figure out linux
 
 
 ## manjaro setup steps
-```sudo pacman -Syy```
+```sudo pacman -Syu```
 ```sudo pacman -S lightdm awesome xorg-server xterm kitty nvim```
 ### light dm
 ```sudo nano /etc/lightdm/lightdm.conf```
@@ -31,4 +31,10 @@ editor = nvim
 
 ```sudo reboot```
 
+## setting up github
+```sudo pacman -S github-cli```
+```gh auth login```
+* github
+* https
+* paste token
 
