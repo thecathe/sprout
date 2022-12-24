@@ -6,7 +6,7 @@ import json
 
 args = []
 features = {}
-default_feature_path = "featured.json"
+default_feature_path = os.path.join(os.path.realpath(os.path.dirname(__file__)),"featured.json")
 
 valid_feature_fields = ["enabled", "commands"]
 
